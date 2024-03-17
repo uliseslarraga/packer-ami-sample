@@ -4,11 +4,15 @@ packer {
       version = ">= 1.2.8"
       source  = "github.com/hashicorp/amazon"
     }
+    ansible = {
+      version = "~> 1"
+      source = "github.com/hashicorp/ansible"
+    }
   }
 }
 
 source "amazon-ebs" "amazon-linux" {
-  ami_name      = "learn-packer-linux-aws"
+  ami_name      = "learn-packer-linux-aws-2"
   instance_type = "t2.micro"
   region        = "us-east-2"
   source_ami_filter {
@@ -26,17 +30,13 @@ source "amazon-ebs" "amazon-linux" {
 build {
     name = "learn-packer"
     sources = [
-    "source.amazon-ebs.amazon-linux"
+      "source.amazon-ebs.amazon-linux"
     ]
-    provisioner "shell" {
-        environment_vars = [
-            "FOO=hello world",
-        ]
-        #inline = [
-        #    "echo Baking AMI images with Packer",
-        #]
-
-        script = "./scripts/setup.sh"
+    provisioner "ansible" {
+      command = "ansible-playbook"
+      playbook_file = "./ansible/playbooks/webapp.yml"
+      extra_arguments = [ "--scp-extra-args", "'-O'" ]
+      user = "ec2-user"
     }
 
 }

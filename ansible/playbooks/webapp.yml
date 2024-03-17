@@ -1,0 +1,28 @@
+- name: 'Provision web app'
+# to test locally uncomment the next 2 lines and comment lines 5 y 6
+#  hosts: all
+#  connection: local
+  hosts: default
+  become: true
+
+  tasks: 
+     - name: Upgrade all packages
+       ansible.builtin.yum:
+         name: '*'
+         state: latest
+     - name: Install dependencies
+       ansible.builtin.yum: name={{ item }} state=present
+       with_items:
+         - git
+     - name: Create App Directory
+       shell: mkdir ~/webapp
+     - name: Provisioning Python Web Application 
+       git:
+          repo: https://github.com/uliseslarraga/flask-app-sample.git
+          dest: ~/webapp
+          clone: yes
+          update: yes
+     - name: Creating Python Virtual env
+       shell: 
+        chdir: ~/webapp
+        cmd: python3 -m venv .webapp

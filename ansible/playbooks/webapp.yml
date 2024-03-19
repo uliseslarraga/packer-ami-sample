@@ -15,14 +15,14 @@
        with_items:
          - git
      - name: Create App Directory
-       shell: mkdir ~/webapp
+       shell: mkdir /home/ec2-user/webapp
      - name: Provisioning Python Web Application 
        git:
           repo: https://github.com/uliseslarraga/flask-app-sample.git
-          dest: ~/webapp
+          dest: /home/ec2-user/webapp
           clone: yes
           update: yes
      - name: Creating Python Virtual env
        shell: 
-        chdir: ~/webapp
+        chdir: /home/ec2-user/webapp
         cmd: python3 -m venv .webapp

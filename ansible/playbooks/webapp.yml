@@ -14,6 +14,7 @@
        ansible.builtin.yum: name={{ item }} state=present
        with_items:
          - git
+         - amazon-cloudwatch-agent
      - name: Create App Directory
        shell: mkdir /home/ec2-user/webapp
      - name: Provisioning Python Web Application 

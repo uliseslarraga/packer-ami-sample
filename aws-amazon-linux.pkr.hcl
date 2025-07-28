@@ -12,12 +12,14 @@ packer {
 }
 
 source "amazon-ebs" "amazon-linux" {
-  ami_name      = "learn-packer-linux-aws-2"
-  instance_type = "t2.micro"
-  region        = "us-east-2"
+  ami_name          = "python-flask-app"
+  instance_type     = "c8g.medium"
+  region            = "" #put your region here
+  vpc_id            = "" #put your vpc here
+  subnet_id         = "" #put your public subnet here
   source_ami_filter {
     filters = {
-      name                = "al2023-ami-2023.*.*-kernel-6.1-x86_64"
+      name                = "al2023-ami-2023*-kernel-6.1-arm64"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -37,6 +39,13 @@ build {
       playbook_file = "./ansible/playbooks/webapp.yml"
       extra_arguments = [ "--scp-extra-args", "'-O'" ]
       user = "ec2-user"
+    }
+    provisioner "file" {
+      source = "config/cloudwatch/config.json"
+      destination = "/tmp/config.json"
+    }
+    provisioner "shell" {
+      inline = ["sudo mv /tmp/config.json /opt/aws/amazon-cloudwatch-agent/bin/"]
     }
 
 }
